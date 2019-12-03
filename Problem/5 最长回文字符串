@@ -78,6 +78,8 @@ s.substr(pos) 截取s中从从pos开始（包括0）到末尾的所有字符的�
 - 替换子串
 s.replace(pos, n, s1) 用s1替换s中从pos开始（包括0）的n个字符的子串
 - vector<vector<int>> matrix(s.length(),vector<int>(s.length(),0))
+
 python:
 - matrix = [[0 for x in range(len(s))] for x in range(len(s))]
+
 ## 联想
