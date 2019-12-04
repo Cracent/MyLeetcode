@@ -62,16 +62,16 @@ public:
         int start=0;
         long long res=0;
         bool negativeflag=false;
-        while(str[start]==" ") start++;
-        if(str[start]=="-"){
+        while(str[start]==' ') start++;
+        if(str[start]=='-'){
             negativeflag=true;
             start++;
-        }else if(str[start]=="+")
+        }else if(str[start]=='+')
             start++;
-        while(str[start]<="9" && str[start]>="0"){
-            res = res*10+(int)(str[start]-"0");
-            if(negativeflag=false && res>INT_MAX) return INT_MAX;
-            else if(negativeflag=true && res-1>INT_MAX) return INT_MIN;
+        while(str[start]<='9' && str[start]>='0'){
+            res = res*10+(int)(str[start]-'0');
+            if(negativeflag==false && res>INT_MAX) return INT_MAX;
+            else if(negativeflag==true && res-1>INT_MAX) return INT_MIN;
             start++;
         }
         return negativeflag==false?res:-res;
