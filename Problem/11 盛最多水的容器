@@ -1,0 +1,60 @@
+## 题目地址
+https://leetcode-cn.com/problems/container-with-most-water/
+
+## 题目描述
+```
+给定 n 个非负整数 a1，a2，...，an，每个数代表坐标中的一个点 (i, ai) 。在坐标内画 n 条垂直线，垂直线 i 的两个端点分别为 (i, ai) 和 (i, 0)。
+找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。
+说明：你不能倾斜容器，且 n 的值至少为 2。
+
+示例:
+输入: [1,8,6,2,5,4,8,3,7]
+输出: 49
+```
+
+## 思路
+-分析：容器容量V=(j-i)*min(i,j)，与两数之间的距离（j-i）和两数最小数有关（min(i,j)）
+
+-思路1：暴力求解所有可能，取最大值，时间复杂度O(n^2)
+
+-思路2：首尾递进，固定较大的值，递进较小的值，取最大容量，时间复杂度O(n)。（移动意味着收缩，移动较大的值不可能增加容器容量，没有意义）
+
+## 代码
+C++ Code：
+```
+class Solution {
+public:
+    int maxArea(vector<int>& height) {
+        int back = height.size()-1,front =0, maxArea=0;
+        while(front<back){
+            maxArea=max(maxArea,min(height[front],height[back])*(back-front));
+            height[front]<height[back]?front++:back--;
+        }
+        return maxArea;
+    }
+};
+```
+Python Code:
+```
+class Solution(object):
+    def maxArea(self, height):
+        """
+        :type height: List[int]
+        :rtype: int
+        """
+        back = len(height)-1
+        front=0
+        maxArea=0
+        while front<back:
+            maxArea=max(maxArea,min(height[back],height[front])*(back-front))
+            if height[front]<height[back]:
+                front+=1
+            else:
+                back-=1
+        return maxArea
+```
+
+## 知识点
+
+## 联想
+-要善于寻找事物的本质且重要的特性，从而来简化算法
