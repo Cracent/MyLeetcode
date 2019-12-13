@@ -1,0 +1,184 @@
+## 题目地址
+https://leetcode-cn.com/problems/merge-k-sorted-lists/submissions/
+
+## 题目描述
+```
+合并 k 个排序链表，返回合并后的排序链表。请分析和描述算法的复杂度。
+
+示例:
+输入:
+[
+  1->4->5,
+  1->3->4,
+  2->6
+]
+输出: 1->1->2->3->4->4->5->6
+```
+
+## 思路
+-思路1：循环遍历，每次涉及对当前k个数进行排序，使用小顶堆排序是个不错的选择，时间复杂度O(nlogk)
+
+-思路2：分治法，递归排序
+
+
+## 代码（思路1+思路2）
+C++ Code：
+```
+思路1：
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        if(lists.size()==0) return NULL;
+        for(int i = (lists.size()-1-1)/2;i>=0;i--) 
+            adjustMinHeap(lists, i, lists.size());
+        ListNode *head = new ListNode(0);
+        ListNode *p = head;
+        while(lists[0]!=NULL){
+            p->next = lists[0];
+            p = p->next;
+            lists[0] = lists[0]->next;
+            adjustMinHeap(lists,0,lists.size());
+        }
+        p = head->next;
+        delete head;
+        return p;
+    }
+
+    void adjustMinHeap(vector<ListNode*>& lists,int pos, int len){
+        int father = pos;
+        int child = 2*father+1;
+        while(child < len){
+            if(child+1 < len 
+            && ((lists[child] == NULL)||(lists[child] != NULL && lists[child+1] != NULL && lists[child]->val > lists[child+1]->val)))
+                child++;
+            if((lists[child] != NULL && lists[father] != NULL && lists[child]->val < lists[father]->val)
+            || (lists[father] == NULL && lists[child] != NULL)){
+                ListNode *temp = lists[child];
+                lists[child]=lists[father];
+                lists[father]=temp;
+            } else break;
+            father=child;
+            child = 2*father+1;
+        }
+    }
+};
+
+思路2：
+class Solution {
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        if(lists.size()==0) return NULL;
+        return mergeLists(lists,0,lists.size()-1);
+    }
+    ListNode* mergeLists(vector<ListNode*>& lists, int left, int right) {
+        if(left == right) return lists[left];
+        int mid = (right+left)/2;
+        ListNode* l1 = mergeLists(lists,left,mid);
+        ListNode* l2 = mergeLists(lists,mid+1,right);
+        return merge2Lists(l1,l2);
+    }
+    ListNode* merge2Lists(ListNode* l1,ListNode* l2) {
+        if(l1==NULL) return l2;
+        if(l2==NULL) return l1;
+        if (l1->val < l2->val){
+            l1->next = merge2Lists(l1->next, l2);
+            return l1;
+        }
+        else{
+            l2->next = merge2Lists(l1,l2->next);
+            return l2;
+        }
+    }
+};
+```
+Python Code:
+```
+思路1：
+# Definition for singly-linked list.
+# class ListNode(object):
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution(object):
+    def mergeKLists(self, lists):
+        """
+        :type lists: List[ListNode]
+        :rtype: ListNode
+        """
+        if len(lists)==0:
+            return None
+        for i in range((len(lists)-1-1)//2,-1,-1):
+            self.adjustMinHeap(lists,i,len(lists))
+        head = ListNode(0)
+        p = head
+        while lists[0]!=None:
+            p.next = lists[0]
+            p=p.next
+            lists[0]=lists[0].next
+            self.adjustMinHeap(lists,0,len(lists))
+        
+        return head.next
+    
+    def adjustMinHeap(self,lists,pos,len):
+        father = pos
+        child = 2*father+1
+        while child<len:
+            if child+1<len and ((lists[child]==None) or (lists[child]!=None and lists[child+1]!=None and lists[child].val>lists[child+1].val)):
+                child+=1
+            if (lists[child]!=None and lists[father]!=None and lists[child].val<lists[father].val) or (lists[father]==None and lists[child]!=None):
+                temp = lists[child]
+                lists[child] = lists[father]
+                lists[father]=temp
+            else:
+                break
+            father = child;
+            child = 2*father+1
+
+思路2：
+class Solution(object):
+    def mergeKLists(self, lists):
+        """
+        :type lists: List[ListNode]
+        :rtype: ListNode
+        """
+        if len(lists)==0:
+            return None
+        return self.mergeList(lists,0,len(lists)-1)
+
+    def mergeList(self,lists,left,right):
+        if left==right:
+            return lists[left]
+        mid = (left+right)//2
+        l1 = self.mergeList(lists,left,mid)
+        l2 = self.mergeList(lists,mid+1,right)
+        return self.mergeTwoList(l1,l2)
+    
+    def mergeTwoList(self,l1,l2):
+        if l1==None:
+            return l2
+        if l2==None:
+            return l1
+        if l1.val<l2.val:
+            l1.next = self.mergeTwoList(l1.next,l2)
+            return l1
+        else:
+            l2.next = self.mergeTwoList(l1,l2.next)
+            return l2
+
+```
+
+## 知识点
+-堆（完全二叉树）排序算法思想：首先构建堆，将堆自下而上进行排序（保证最小值在堆顶）；然后，堆顶更新值，自上而下排序。
+
+-两个排序链表合并排序的递归方法：每次递归确定合并链表的下一个值；出口为某一链表为空时另一链表。
+
+## 联想
